@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>遊樂園設施快查</title>
+<style>
+/* ==========================================================================
+   手冊風：左側深色目錄欄 ＋ 右側米色紙面內文 ＋ 襯線體標題 ＋ 金色強調
+   （前四支是「多色漸層頁首＋白卡片單欄」，這支刻意做成不一樣的樣子）
+   ========================================================================== */
+:root{
+  --pane:#232019; --pane2:#2E2A22; --pane3:#3A342A;
+  --paneInk:#DCD5C5; --paneInk2:#9C9482; --paneLine:#38322A;
+  --gold:#B8912A; --gold2:#D9B44A; --goldSoft:#F4E8C6;
+  --paper:#FBF6EC; --paper2:#F4EDDE; --paper3:#EFE6D3;
+  --ink:#2A2520; --ink2:#544C3E; --ink3:#7C7364;
+  --line:#E3D9C5; --line2:#EFE7D8;
+  --ex:#1F5C3D; --exBg:#EAF3EC; --exLine:#C9E1D1;
+  --note:#9A5B12; --noteBg:#FBF0DC; --noteLine:#EDDBB4;
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%}
+body{
+  background:var(--paper);color:var(--ink);font:15px/1.75 var(--sans);
+  -webkit-text-size-adjust:100%;display:flex;flex-direction:column;overflow:hidden;
+}
+button{font-family:inherit}
+
+/* ---------- 上方細工具列（沒有漸層頁首） ---------- */
+#top{
+  flex:0 0 auto;display:flex;align-items:center;gap:12px;
+  padding:0 14px;height:52px;background:var(--pane);border-bottom:2px solid var(--gold);
+}
+.brand{display:flex;align-items:baseline;gap:8px;white-space:nowrap;flex:0 0 auto}
+.brand .bk{font-family:var(--serif);font-size:17px;font-weight:700;color:#fff;letter-spacing:1px}
+.brand .bs{font-size:11.5px;color:var(--paneInk2);letter-spacing:.5px}
+.sBox{position:relative;flex:1 1 auto;max-width:520px;margin:0 auto}
+.sBox input{
+  width:100%;padding:8px 34px 8px 32px;font-size:14px;font-family:inherit;
+  border:1px solid var(--pane3);border-radius:8px;background:#191612;color:#F2ECDF;
+}
+.sBox input::placeholder{color:#7B7365}
+.sBox input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,145,42,.22)}
+.sBox .ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.65}
+.sBox .clr{position:absolute;right:5px;top:50%;transform:translateY(-50%);border:0;background:transparent;
+  font-size:17px;color:var(--paneInk2);cursor:pointer;padding:3px 7px;line-height:1}
+.tBtns{display:flex;gap:6px;flex:0 0 auto}
+.tBtns button{
+  background:transparent;border:1px solid var(--pane3);color:var(--paneInk);
+  padding:6px 11px;border-radius:7px;font-size:12.5px;cursor:pointer;white-space:nowrap;
+}
+.tBtns button:hover{border-color:var(--gold);color:var(--gold2)}
+
+/* ---------- 兩欄 ---------- */
+#body{flex:1 1 auto;display:flex;min-height:0}
+
+/* 左：目錄 */
+#toc{
+  flex:0 0 300px;min-width:0;overflow:auto;background:var(--pane);color:var(--paneInk);
+  border-right:1px solid var(--paneLine);-webkit-overflow-scrolling:touch;
+}
+#tree{padding:8px 0 4px}
+.tocMsg{padding:16px 16px 4px;font-size:12.5px;color:var(--paneInk2);line-height:1.9}
+.tocMsg b{color:var(--gold2)}
+
+.lotHd,.grpHd,.play,.res{
+  display:flex;align-items:center;gap:7px;width:100%;text-align:left;
+  border:0;background:transparent;color:inherit;cursor:pointer;font-family:inherit;
+}
+.lotHd{
+  padding:9px 12px;font-family:var(--serif);font-size:15px;font-weight:700;color:#F0E9D9;
+  letter-spacing:.6px;border-top:1px solid var(--paneLine);
+}
+.lot:first-child .lotHd{border-top:0}
+.lotHd:hover{background:var(--pane2)}
+.lotHd .tw{font-size:10px;color:var(--gold);width:10px;flex:0 0 10px}
+.lotHd .nm{flex:1 1 auto;min-width:0}
+.ct{font-size:11px;color:var(--paneInk2);background:#1A1713;border-radius:999px;padding:1px 8px;flex:0 0 auto}
+
+.grpHd{padding:6px 12px 6px 26px;font-size:13.5px;color:var(--paneInk)}
+.grpHd:hover{background:var(--pane2)}
+.grpHd .tw{font-size:9px;color:var(--paneInk2);width:9px;flex:0 0 9px}
+.grpHd .nm{flex:1 1 auto;min-width:0;word-break:break-word}
+.grpHd.on{color:var(--gold2)}
+.kk{font-size:10px;font-weight:700;color:#2A2520;background:var(--gold2);border-radius:4px;
+  padding:0 5px;letter-spacing:.5px;flex:0 0 auto}
+
+.subHd{padding:7px 12px 3px 40px;font-size:11px;color:var(--paneInk2);letter-spacing:.8px;
+  font-weight:700;word-break:break-word}
+.play{padding:5px 12px 5px 40px;font-size:13px;color:#C7C0B1;line-height:1.5}
+.play:hover{background:var(--pane2);color:#F0E9D9}
+.play.on{background:var(--gold);color:#221E17;font-weight:700}
+.play .nm{flex:1 1 auto;min-width:0;word-break:break-word}
+.play .sb{font-size:11px;color:var(--paneInk2);flex:0 0 auto}
+.play.on .sb{color:#4A3F1E}
+mark{background:var(--gold2);color:#221E17;border-radius:2px;padding:0 1px}
+.play.on mark{background:#221E17;color:var(--gold2)}
+
+.resHd{padding:11px 12px 4px;font-family:var(--serif);font-size:12.5px;font-weight:700;
+  color:var(--gold2);letter-spacing:1px;border-top:1px solid var(--paneLine)}
+.resHd:first-child{border-top:0}
+.res{padding:5px 12px 5px 20px;font-size:13px;color:#C7C0B1;line-height:1.5;flex-wrap:wrap}
+.res:hover{background:var(--pane2);color:#F0E9D9}
+.res.on{background:var(--gold);color:#221E17;font-weight:700}
+.res .nm{flex:1 1 auto;min-width:0;word-break:break-word}
+.res .pt{width:100%;font-size:11px;color:var(--paneInk2);padding-left:0}
+.res.on .pt{color:#4A3F1E}
+
+#foot{padding:12px 12px 20px;border-top:1px solid var(--paneLine);margin-top:6px;
+  font-size:11.5px;color:var(--paneInk2);line-height:1.85}
+#foot b{color:var(--paneInk)}
+#foot .fb{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+#foot .fb button{background:transparent;border:1px solid var(--pane3);color:var(--paneInk2);
+  border-radius:6px;padding:5px 9px;font-size:11.5px;cursor:pointer}
+#foot .fb button:hover{border-color:var(--gold);color:var(--gold2)}
+
+/* 右：紙面內文 */
+#detail{
+  flex:1 1 auto;min-width:0;overflow:auto;background:var(--paper);
+  -webkit-overflow-scrolling:touch;
+}
+.back{display:none}
+.doc{max-width:760px;margin:0 auto;padding:26px 30px 70px}
+.crumb{font-size:12.5px;color:var(--ink3);letter-spacing:.4px;margin-bottom:10px;word-break:break-word}
+.crumb i{font-style:normal;color:var(--gold);margin:0 6px}
+.dTop{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.dk{font-size:11.5px;font-weight:700;color:#5A4510;background:var(--goldSoft);
+  border:1px solid #E3D09A;border-radius:5px;padding:1px 8px;letter-spacing:.5px}
+h1.dt{
+  font-family:var(--serif);font-size:27px;font-weight:700;margin:2px 0 0;line-height:1.4;
+  letter-spacing:1px;word-break:break-word;
+}
+.rule{height:3px;background:var(--gold);width:46px;margin:12px 0 20px;border-radius:2px}
+
+.sec{margin-bottom:20px}
+.sec h2{
+  font-family:var(--serif);font-size:14px;font-weight:700;margin:0 0 7px;color:var(--gold);
+  letter-spacing:1.6px;display:flex;align-items:center;gap:9px;
+}
+.sec h2::after{content:"";flex:1 1 auto;height:1px;background:var(--line)}
+.tx{
+  background:#fff;border:1px solid var(--line);border-left:3px solid var(--line);
+  border-radius:3px;padding:12px 15px;font-size:15px;line-height:1.95;
+  white-space:pre-wrap;word-break:break-word;color:var(--ink);
+}
+.tx.ex{background:var(--exBg);border-color:var(--exLine);border-left-color:var(--ex);
+  font-family:var(--sans);font-size:14.5px}
+.tx.note{background:var(--noteBg);border-color:var(--noteLine);border-left-color:var(--note);
+  font-size:14px;color:#6B4310}
+.tx.desc{background:var(--paper2);border-color:var(--line);border-left-color:var(--gold)}
+.tx.none{background:transparent;border-style:dashed;border-left-style:dashed;
+  color:var(--ink3);font-size:13.5px}
+
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px;padding-top:16px;border-top:1px solid var(--line)}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink2);border-radius:7px;
+  padding:8px 14px;font-size:13.5px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--gold);color:var(--gold)}
+.btn.pri{background:var(--gold);border-color:var(--gold);color:#221E17;font-weight:700}
+.btn.pri:hover{background:var(--gold2);color:#221E17}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* 待命畫面（一打開不列結果，只列園區當入口） */
+.idle{max-width:760px;margin:0 auto;padding:34px 30px 70px}
+.idle h1{font-family:var(--serif);font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:1px}
+.idle .lead{font-size:14px;color:var(--ink2);line-height:1.95;margin-bottom:6px}
+.idle .lead b{color:var(--gold)}
+.idle .rule{margin:14px 0 22px}
+.ent{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(168px,100%),1fr));gap:10px}
+.ent button{
+  border:1px solid var(--line);background:#fff;border-radius:8px;padding:12px 13px;
+  text-align:left;cursor:pointer;color:var(--ink);line-height:1.5;
+}
+.ent button:hover{border-color:var(--gold);background:#FFFDF7}
+.ent .en{font-family:var(--serif);font-size:16px;font-weight:700;display:block;letter-spacing:.5px}
+.ent .ec{font-size:12px;color:var(--ink3);display:block;margin-top:3px}
+.tip{margin-top:22px;font-size:12.5px;color:var(--ink3);line-height:1.95;
+  border-top:1px solid var(--line);padding-top:14px}
+.tip b{color:var(--ink2)}
+.tip code{background:var(--paper3);border-radius:4px;padding:1px 5px;font-size:12px}
+
+/* ---------- 彈窗 ---------- */
+.mask{position:fixed;inset:0;background:rgba(25,22,18,.6);z-index:90;display:flex;
+  align-items:center;justify-content:center;padding:14px}
+.modal{background:var(--paper);border-radius:10px;width:100%;max-width:780px;max-height:92vh;
+  display:flex;flex-direction:column;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.35);
+  border-top:3px solid var(--gold)}
+.mHd{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;
+  align-items:center;justify-content:space-between;gap:10px;background:#fff}
+.mHd h2{margin:0;font-size:16px;font-family:var(--serif);letter-spacing:.8px}
+.mBd{padding:14px 16px;overflow:auto}
+.mFt{padding:11px 16px;border-top:1px solid var(--line);display:flex;gap:8px;
+  justify-content:flex-end;flex-wrap:wrap;background:var(--paper2)}
+.x{border:0;background:transparent;font-size:23px;line-height:1;color:var(--ink3);cursor:pointer;padding:2px 6px}
+textarea.big2{width:100%;min-height:180px;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace;
+  border:1px solid var(--line);border-radius:7px;padding:10px;line-height:1.6;resize:vertical;
+  color:var(--ink);background:#fff}
+textarea.big2:focus{outline:none;border-color:var(--gold)}
+.hint{font-size:12.5px;color:var(--ink3);line-height:1.9}
+.hint p{margin:0 0 9px}
+.hint b{color:var(--ink2)}
+.hint code{background:var(--paper3);border-radius:4px;padding:1px 5px;font-size:12px}
+.rowLabel{font-size:11.5px;color:var(--ink3);font-weight:700;letter-spacing:.8px;margin:12px 0 5px}
+.prev{background:#fff;border:1px solid var(--line);border-radius:7px;padding:10px 12px;
+  font-size:13px;margin-top:10px;line-height:1.85}
+.prev.bad{background:#FBE7E3;border-color:#EFC7C0;color:#A63525}
+.prev.good{background:var(--exBg);border-color:var(--exLine);color:#14603C}
+.radios{display:flex;gap:14px;flex-wrap:wrap;font-size:13.5px;color:var(--ink2);margin:6px 0 2px}
+.radios label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.radios input{width:16px;height:16px;accent-color:var(--gold)}
+select.sel{font-family:inherit;font-size:13.5px;padding:7px 10px;border:1px solid var(--line);
+  border-radius:7px;background:#fff;color:var(--ink);max-width:100%}
+select.sel:focus{outline:none;border-color:var(--gold)}
+table.doc2{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}
+table.doc2 th,table.doc2 td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+table.doc2 th{background:var(--paper2);color:var(--ink2);white-space:nowrap}
+
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(12px);
+  background:#221E17;color:#F2ECDF;padding:11px 20px;border-radius:8px;font-size:14px;z-index:120;
+  opacity:0;pointer-events:none;transition:.2s;box-shadow:0 8px 24px rgba(0,0,0,.3);
+  max-width:90vw;text-align:center;border:1px solid var(--gold)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- 手機：目錄全寬，點設施後內文整頁滑出 ---------- */
+@media(max-width:760px){
+  #top{height:auto;flex-wrap:wrap;padding:8px 10px;gap:8px}
+  .brand{flex:1 1 auto}
+  .tBtns{flex:0 0 auto}
+  .sBox{flex:1 1 100%;max-width:none;margin:0;order:3}
+  #toc{flex:1 1 100%;border-right:0}
+  #detail{
+    position:fixed;left:0;right:0;top:0;bottom:0;z-index:60;background:var(--paper);
+    transform:translateX(100%);transition:transform .22s ease;
+  }
+  body.dv #detail{transform:translateX(0)}
+  .back{
+    display:flex;align-items:center;gap:5px;position:sticky;top:0;z-index:2;width:100%;
+    border:0;border-bottom:1px solid var(--line);background:var(--paper2);color:var(--ink2);
+    padding:11px 14px;font-size:14px;cursor:pointer;font-family:inherit;
+  }
+  .doc{padding:16px 16px 60px}
+  .idle{padding:20px 16px 60px}
+  h1.dt{font-size:23px}
+}
+/* iOS 點進輸入框會自動放大 → 手機一律 16px */
+@media(pointer:coarse){
+  input,textarea,select{font-size:16px !important}
+}
+@media print{
+  #top,#toc,.acts,.back{display:none}
+  body{display:block;overflow:visible;height:auto}
+  #body{display:block}
+  #detail{overflow:visible}
+}
+</style>
+</head>
+<body>
+
+<div id="top">
+  <div class="brand"><span class="bk">📖 遊樂園設施快查</span><span class="bs">遊玩規則與遊玩範例</span></div>
+  <div class="sBox">
+    <span class="ic">🔍</span>
+    <input id="q" type="search" autocomplete="off" placeholder="搜設施名稱，例如：雲霄飛車、旋轉木馬、激流勇進、鬼屋">
+    <button class="clr" id="qClr" title="清除" style="display:none">✕</button>
+  </div>
+  <div class="tBtns">
+    <button id="btnAdd">➕ 新增</button>
+    <button id="btnExport">⬇ 匯出</button>
+    <button id="btnHelp">❓ 說明</button>
+  </div>
+</div>
+
+<div id="body">
+  <nav id="toc"><div id="tree"></div><div id="foot"></div></nav>
+  <main id="detail"></main>
+</div>
+
+<div id="modal"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==========================================================================
+   遊樂園設施快查 — 單一檔案版（第二段：資料、搜尋、解析）
+   所有資料只留在這台裝置的瀏覽器（localStorage），不會上傳到任何地方。
+   ========================================================================== */
+"use strict";
+
+/* ---------- 內建資料（來自「設施说明整理.xlsx」8 個分頁 ＋ 園區服務 設施示例 docx） ---------- */
+var BUILTIN = {"at":"示範資料（虛構的遊樂園設施，非任何實際園區）","lots":[{"n":"極速地帶","groups":[{"n":"雲霄飛車類","k":"","desc":"","ex":"","note":"","plays":[{"n":"雷霆過山車","sub":"戶外","rule":"身高限制 140 公分以上；12 歲以下需成人陪同。孕婦、心臟病、高血壓、頸椎或背部不適者請勿搭乘。全程約 2 分 30 秒，最高時速 90 公里，含 3 個倒轉。","ex":"遊客身高 138 公分，未達 140 公分下限 → 不可搭乘，可改搭「小飛龍」。","note":"雨天或風速超過每秒 12 公尺時暫停開放。"},{"n":"急速迴旋","sub":"室內","rule":"身高限制 130 公分以上；全程室內、燈光昏暗，含急轉與短暫失重。隨身物品需寄放置物櫃。","ex":"遊客身高 132 公分、10 歲 → 可搭乘，但 12 歲以下需成人陪同。","note":""},{"n":"小飛龍","sub":"親子","rule":"身高限制 95 公分以上；95～120 公分需成人同座。速度緩和、無倒轉，適合初次體驗。","ex":"一家四口，小孩分別 100 與 125 公分 → 100 公分那位需成人同座，125 公分可獨自乘坐。","note":""}]},{"n":"落體類","k":"","desc":"","ex":"","note":"","plays":[{"n":"自由落體塔","sub":"戶外","rule":"身高限制 130 公分以上；上升至 60 公尺後自由落下。有懼高症者請斟酌。","ex":"遊客身高 129 公分 → 差 1 公分即不可搭乘，現場以量測結果為準。","note":""},{"n":"彈跳飛椅","sub":"","rule":"身高限制 120 公分以上；座椅為懸吊式，鞋子需綁緊或脫下寄放。","ex":"遊客穿拖鞋 → 需脫下放入置物籃後方可搭乘。","note":""}]},{"n":"快速通關專區","k":"快速通關","desc":"","ex":"","note":"","plays":[{"n":"雷霆過山車（快速通關）","sub":"","rule":"持快速通關手環者由專用入口進場，每張手環每日限用 1 次，不可跨設施互換。","ex":"同行三人只有一人持手環 → 只有該員可走快速通關，其餘兩位需一般排隊。","note":""},{"n":"自由落體塔（快速通關）","sub":"","rule":"持快速通關手環者由專用入口進場；快速通關不豁免身高限制。","ex":"持手環但身高 125 公分 → 仍不可搭乘。","note":""}]}]},{"n":"水上樂園","groups":[{"n":"滑水道類","k":"","desc":"水上樂園所有滑水道共同規定：需著泳裝、禁止配戴眼鏡與飾品（可用泳鏡）、身上有傷口或傳染性皮膚病者請勿下水。以下各設施再另外標註各自的身高與乘坐方式。","ex":"","note":"","plays":[{"n":"巨浪滑道","sub":"","rule":"身高限制 120 公分以上；需穿著泳裝，禁止牛仔褲與有金屬扣的衣物。單人乘坐，雙手抱胸。","ex":"遊客穿著 T 恤與短褲 → 不符泳裝規定，需更換後再排隊。","note":""},{"n":"七色競速道","sub":"","rule":"身高限制 110 公分以上；六道並排，需使用園方提供的滑墊，趴姿滑行。","ex":"兩位小朋友想一起滑 → 每道一人，可相鄰道次同時出發。","note":""},{"n":"大水桶漂流","sub":"親子","rule":"身高限制 90 公分以上；90～110 公分需成人同乘，雙人或四人浮圈。","ex":"父母帶 95 公分小孩 → 需與成人同乘一個浮圈。","note":""}]},{"n":"戲水區","k":"","desc":"","ex":"","note":"","plays":[{"n":"漂漂河","sub":"","rule":"無身高限制；6 歲以下需成人全程陪同，全程約 15 分鐘，可自備或租借浮圈。","ex":"3 歲幼兒 → 可入場，成人需全程在旁。","note":""},{"n":"人工造浪池","sub":"","rule":"無身高限制；每整點造浪 10 分鐘，造浪期間 120 公分以下需穿救生衣。","ex":"造浪時段小孩 115 公分 → 需穿園方提供的救生衣。","note":""}]}]},{"n":"童話森林","groups":[{"n":"旋轉類","k":"","desc":"","ex":"","note":"","plays":[{"n":"旋轉木馬","sub":"","rule":"無身高限制；100 公分以下需成人同乘。可選擇木馬或固定座椅。","ex":"阿嬤帶 2 歲孫子 → 可一起乘坐固定座椅，或成人站在木馬旁扶持。","note":""},{"n":"飛天茶杯","sub":"","rule":"身高限制 90 公分以上；每杯最多 4 人，可自行轉動中央把手控制旋轉速度。","ex":"五人家庭 → 需分成兩杯。","note":""},{"n":"魔法飛椅","sub":"","rule":"身高限制 110 公分以上；單人懸吊座椅，離地約 5 公尺。","ex":"遊客 108 公分 → 不可搭乘，可改搭旋轉木馬。","note":""}]},{"n":"劇場類","k":"","desc":"","ex":"","note":"","plays":[{"n":"森林音樂劇","sub":"室內","rule":"無身高限制；每場 25 分鐘，開演後不開放入場。場內禁止飲食與攝影。","ex":"遲到 5 分鐘 → 需等下一場。","note":""},{"n":"4D 動感劇院","sub":"室內","rule":"身高限制 100 公分以上；座椅會晃動並有水霧與氣流效果，孕婦請勿入場。","ex":"遊客 98 公分 → 不可入場，可改看森林音樂劇。","note":""}]}]},{"n":"兒童王國","groups":[{"n":"幼兒設施","k":"","desc":"","ex":"","note":"","plays":[{"n":"小小消防車","sub":"","rule":"身高限制 80～120 公分；限 8 歲以下兒童，家長在圍欄外等候。","ex":"125 公分的 7 歲小孩 → 超過身高上限，不可搭乘。","note":""},{"n":"動物列車","sub":"","rule":"無身高限制；90 公分以下需成人同乘，繞行兒童王國一圈約 6 分鐘。","ex":"成人想單獨搭乘 → 可以，但尖峰時段優先讓有孩童的家庭。","note":""},{"n":"球池樂園","sub":"","rule":"限 3～10 歲；需穿襪子，家長可陪同入內。每場 20 分鐘。","ex":"小孩沒穿襪子 → 可於入口購買。","note":""}]},{"n":"親子互動","k":"","desc":"","ex":"","note":"","plays":[{"n":"碰碰車","sub":"","rule":"身高限制 100 公分以上可獨自駕駛；90～100 公分需成人同車。","ex":"95 公分小孩 → 需與成人同車，由成人駕駛。","note":""},{"n":"小型攀爬塔","sub":"","rule":"限 12 歲以下、身高 140 公分以下；離地最高 4 公尺，有安全網。","ex":"145 公分的 11 歲小孩 → 超過身高上限，不可進入。","note":""}]}]},{"n":"冒險世界","groups":[{"n":"探險類","k":"","desc":"","ex":"","note":"","plays":[{"n":"激流勇進","sub":"","rule":"身高限制 110 公分以上；110～130 公分需成人同乘。最後一段落差 15 公尺，會全身濕透，建議自備雨衣或購買園內雨衣。","ex":"遊客 115 公分 → 需與成人同乘一艘船。","note":""},{"n":"叢林吉普車","sub":"","rule":"身高限制 90 公分以上；90～110 公分需成人同座。路線顛簸，孕婦請勿搭乘。","ex":"孕婦想搭乘 → 不建議，可改搭觀光小火車。","note":""},{"n":"失落神殿","sub":"室內","rule":"身高限制 120 公分以上；室內黑暗環境，含突發音效與火焰特效。","ex":"遊客怕黑 → 可先觀看入口的體驗影片再決定。","note":""}]},{"n":"快速通關專區","k":"快速通關","desc":"","ex":"","note":"","plays":[{"n":"激流勇進（快速通關）","sub":"","rule":"持快速通關手環者由專用入口進場；同乘的成人也需持有手環。","ex":"小孩有手環、陪同成人沒有 → 成人不可走快速通關，兩人需一般排隊。","note":""}]}]},{"n":"恐怖夜城","groups":[{"n":"鬼屋類","k":"","desc":"","ex":"","note":"","plays":[{"n":"廢棄醫院","sub":"室內","rule":"限 12 歲以上；全程步行約 10 分鐘，含工作人員扮演的鬼怪驚嚇。心臟病、孕婦請勿入場。禁止觸碰演員與攝影。","ex":"11 歲想入場 → 未滿 12 歲不可入場，即使家長同意也不行。","note":"夜間 18:00 後才開放。"},{"n":"鬼影迷宮","sub":"室內","rule":"限 10 歲以上；10～12 歲需成人陪同。無工作人員扮演，以聲光與機關為主。","ex":"10 歲小孩獨自入場 → 需成人陪同。","note":""}]},{"n":"夜間限定","k":"","desc":"","ex":"","note":"","plays":[{"n":"幽靈馬車","sub":"夜間","rule":"身高限制 100 公分以上；僅 18:00～閉園開放，全程約 8 分鐘。","ex":"下午 3 點想搭 → 尚未開放，請於 18:00 後再來。","note":""}]}]},{"n":"海洋館","groups":[{"n":"展館類","k":"","desc":"","ex":"","note":"","plays":[{"n":"海底隧道","sub":"室內","rule":"無身高限制；全長 80 公尺，禁止拍打玻璃與使用閃光燈。","ex":"想用閃光燈拍照 → 不可，會驚擾魚群。","note":""},{"n":"水母展區","sub":"室內","rule":"無身高限制；燈光昏暗，推車可入內。","ex":"嬰兒車 → 可推入，請靠右通行。","note":""}]},{"n":"表演類","k":"","desc":"","ex":"","note":"","plays":[{"n":"海豚表演","sub":"戶外","rule":"無身高限制；每日 11:00、14:00、16:30 三場，每場 30 分鐘。前三排為潑水區。","ex":"坐前三排 → 會被潑濕，請自行斟酌。","note":""},{"n":"企鵝餵食秀","sub":"","rule":"無身高限制；每日 10:30 與 15:00，限時 20 分鐘，可近距離觀看，禁止投餵。","ex":"想自己餵企鵝 → 不開放遊客投餵。","note":""}]}]},{"n":"太空基地","groups":[{"n":"模擬體驗","k":"","desc":"","ex":"","note":"","plays":[{"n":"火箭發射模擬","sub":"室內","rule":"身高限制 120 公分以上；模擬 3G 加速度，體驗約 4 分鐘。心臟病、孕婦請勿搭乘。","ex":"遊客 118 公分 → 不可搭乘，可改玩星際射擊。","note":""},{"n":"失重體驗艙","sub":"室內","rule":"身高限制 130 公分以上；體驗約 30 秒失重感，需簽署同意書。","ex":"未成年人 → 需監護人簽署同意書。","note":""}]},{"n":"互動體驗","k":"","desc":"","ex":"","note":"","plays":[{"n":"星際射擊","sub":"室內","rule":"身高限制 90 公分以上；乘坐軌道車射擊目標計分，每車 2 人。","ex":"三人同行 → 需分成兩車。","note":""},{"n":"太空漫步","sub":"","rule":"身高限制 110 公分以上；懸吊式座椅緩慢繞行，離地 8 公尺。","ex":"懼高症遊客 → 不建議搭乘。","note":""}]}]},{"n":"懷舊街區","groups":[{"n":"經典設施","k":"","desc":"","ex":"","note":"","plays":[{"n":"摩天輪","sub":"","rule":"無身高限制；每車廂最多 6 人，一圈約 12 分鐘。","ex":"情侶想包廂 → 非尖峰時段可向工作人員詢問。","note":""},{"n":"觀光小火車","sub":"","rule":"無身高限制；繞行全園一圈約 20 分鐘，可於各園區站點上下車。","ex":"推嬰兒車 → 有專用車廂可停放。","note":""},{"n":"復古碰碰車","sub":"","rule":"身高限制 100 公分以上可獨自駕駛；90～100 公分需成人同車。","ex":"與兒童王國的碰碰車規則相同。","note":""}]},{"n":"快速通關專區","k":"快速通關","desc":"","ex":"","note":"","plays":[{"n":"摩天輪（快速通關）","sub":"","rule":"持快速通關手環者由專用入口進場；一組手環可讓同車廂最多 6 人一起進場。","ex":"一家五口只有一人持手環 → 可以全家一起走快速通關。","note":""}]}]},{"n":"花園廣場","groups":[{"n":"休憩區","k":"","desc":"","ex":"","note":"","plays":[{"n":"花園迷宮","sub":"","rule":"無身高限制；6 歲以下需成人陪同，走完約 15 分鐘，有兩個出口。","ex":"小孩走失 → 迷宮中央有服務台可廣播協尋。","note":""},{"n":"噴泉表演","sub":"戶外","rule":"無身高限制；每日 12:00、15:00、19:00 三場，夜場有燈光秀。","ex":"想看燈光秀 → 只有 19:00 場次有。","note":""}]}]},{"n":"美食大道","groups":[{"n":"園區服務","k":"","desc":"","ex":"","note":"","plays":[{"n":"置物櫃","sub":"","rule":"小櫃 50 元、大櫃 100 元，可重複開啟；閉園後未取物品移至服務台保管 7 天。","ex":"閉園後才想起東西沒拿 → 隔天憑收據到服務台領取。","note":""},{"n":"嬰兒車租借","sub":"","rule":"每台 100 元／日，需押證件；限 3 歲以下幼兒使用。","ex":"4 歲小孩 → 超過使用年齡，不提供租借。","note":""},{"n":"輪椅租借","sub":"","rule":"免費，需押證件；持身心障礙證明者可優先搭乘各設施（仍需符合身高與健康限制）。","ex":"持證明想搭雷霆過山車 → 仍需符合 140 公分身高限制。","note":""}]}]}]};
+
+/* ---------- 小工具 ---------- */
+var $ = function (s) { return document.querySelector(s); };
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+function toast(msg) {
+  var t = $("#toast");
+  t.textContent = msg; t.classList.add("on");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function () { t.classList.remove("on"); }, 2400);
+}
+function cellClean(s) {
+  return String(s == null ? "" : s)
+    .replace(/\r\n?/g, "\n").replace(/ /g, " ")
+    .replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+function flat(s) { return cellClean(s).replace(/\s+/g, " "); }
+
+/* ---------- 繁 → 簡 折疊（讓打繁體也找得到簡體資料） ---------- */
+var T2S_PAIRS = 
+  "與与專专業业兩两為为麼么樂乐亂乱虧亏雲云產产親亲僅仅從从會会傳传體体偵侦關关內内冊册凍冻擊击劃划則则創创刪删別别區区協协單单廳厅" +
+  "歷历曆历壓压參参雙双發发髮发變变號号後后員员響响團团圍围國国圖图處处備备復复複复頭头夾夹娛娱學学實实對对尋寻導导將将嘗尝盡尽層层" +
+  "屬属幣币帳帐並并應应開开異异彈弹強强當当錄录徑径懷怀態态總总戶户執执護护報报擬拟擇择掛挂擋挡損损換换據据數数斷断無无舊旧時时顯显" +
+  "暫暂術术機机權权條条欄栏樣样檔档檢检沒没測测瀏浏漲涨灣湾點点煩烦狀状環环現现電电畫画碼码確确種种稱称穩稳類类紅红級级紀纪線线組组" +
+  "細细經经綁绑結结給给絡络統统繼继續续維维緩缓編编縮缩網网聯联腦脑艦舰蘇苏蘋苹範范獲获藍蓝虛虚補补裝装見见規规視视覽览計计認认讓让" +
+  "議议訊讯記记論论設设訪访證证詐诈譯译試试詢询該该詳详誤误請请調调諮谘謝谢敗败賬账購购貼贴資资轉转軟软載载較较輯辑邊边達达過过運运" +
+  "還还這这進进連连遲迟適适選选裡里錢钱銀银鏈链鎖锁錯错鍵键閉闭問问間间隊队難难頁页項项順顺須须頻频題题額额風风飛飞餘余饋馈馬马驗验" +
+  "騙骗驟骤龍龙臨临驅驱齊齐圓圆遊游場场標标準准價价買买賣卖費费貨货質质賺赚輪轮軌轨遠远邁迈郵邮鄰邻釋释鏡镜閃闪閱阅陣阵階阶隨随險险" +
+  "雜杂霧雾靈灵領领顆颗願愿飄飘餅饼養养館馆驚惊鬥斗鮮鲜鹽盐麥麦黃黄齒齿節节億亿個个們们說说讀读話话誰谁語语課课講讲謹谨識识讚赞財财" +
+  "貴贵贈赠軍军輛辆輕轻轎轿農农遞递遷迁鄉乡醬酱鑑鉴鐘钟陸陆隱隐雞鸡韓韩頂顶顧顾飯饭驢驴髒脏鳥鸟鴨鸭鵝鹅麗丽龜龟倉仓儀仪兒儿兇凶剛刚" +
+  "劇剧動动務务勞劳匯汇卻却廠厂廣广廢废彌弥徹彻憑凭懶懒戰战擁拥攔拦攜携敵敌斬斩極极榮荣樓楼歐欧歲岁殺杀氣气溫温滿满澤泽濟济燈灯營营" +
+  "獨独獅狮玨珏疊叠皺皱監监盧卢眾众睜睁矯矫礙碍禮礼稅税積积穌稣竊窃筆笔簡简籃篮糧粮紙纸純纯絕绝綜综緊紧縣县織织繳缴罷罢羅罗聲声職职" +
+  "聽听肅肃膚肤臉脸舉举艙舱蓋盖蒐搜蘭兰蟲虫襯衬覺觉觸触訂订診诊註注詞词誠诚諾诺謠谣譽誉貞贞貢贡貧贫販贩責责賀贺賓宾賦赋贊赞赬赪趕赶" +
+  "躍跃軸轴辦办辭辞遺遗邏逻醫医釐厘鋼钢錶表鍋锅鎮镇鐵铁鑰钥長长門门陽阳靜静鞏巩韌韧頑顽頒颁預预頗颇頸颈顏颜颱台飼饲餓饿饑饥馳驰駐驻" +
+  "騎骑驕骄鬧闹魚鱼鮑鲍鹹咸麵面黨党齡龄寫写嗎吗來来東东繞绕終终彙汇庫库啟启離离決决篩筛佔占併并儘尽兌兑勵励勸劝嚴严壞坏夠够奮奋寧宁" +
+  "寬宽寶宝屆届幟帜幾几廚厨彎弯徵征憂忧懲惩戀恋掃扫撐撑擺摆攝摄曬晒楊杨歡欢歸归殘残毀毁溝沟滅灭潔洁濁浊災灾燒烧爐炉爭争爺爷牆墙獄狱" +
+  "畢毕療疗癢痒盜盗碩硕禍祸窮穷簽签籤签糾纠紐纽絆绊綢绸緞缎縫缝繪绘纖纤罰罚聰聪腫肿艱艰葉叶藉借蘊蕴虜虏蝦虾螞蚂蠟蜡衛卫衝冲襪袜覓觅" +
+  "觀观誇夸諒谅謎谜譜谱豐丰豈岂貫贯賤贱贖赎蹟迹軀躯轟轰辯辩逕径遜逊鄭郑醜丑鑄铸閘闸隸隶顫颤飢饥餵喂饒饶騰腾鬆松鬱郁鳳凤鴻鸿齣出傑杰" +
+  "傭佣剝剥匱匮叢丛壘垒壯壮妝妆孫孙崗岗帥帅幫帮廟庙憲宪揀拣斃毙樁桩檻槛瑯琅疇畴睞睐粵粤缽钵羨羡翹翘芻刍蓆席誌志謗谤贍赡輩辈轄辖遙遥" +
+  "醞酝鍾钟鎊镑陝陕靄霭韁缰餃饺駕驾髖髋鬍胡鮭鲑鹼碱麩麸龐庞繫系繋系係系競竞瑪玛夢梦際际慶庆憶忆懇恳攤摊擾扰濱滨燦灿猶犹獵猎瓊琼癥症" +
+  "皰疱矚瞩硯砚礎础稜棱穎颖竄窜綴缀縱纵繽缤罌罂翽翙聳耸脈脉藥药蟬蝉襬摆貳贰賴赖贛赣蹤踪軒轩遼辽鄲郸鑼锣隴陇韋韦顱颅飆飙餌饵駁驳鬚须" +
+  "鯨鲸鹵卤齋斋萬万膽胆於于亞亚搖摇構构張张綠绿減减蘆芦濾滤撲扑帶带";
+var T2S = (function () {
+  var m = {}, i;
+  for (i = 0; i + 1 < T2S_PAIRS.length; i += 2) {
+    if (T2S_PAIRS[i] !== T2S_PAIRS[i + 1]) m[T2S_PAIRS[i]] = T2S_PAIRS[i + 1];
+  }
+  return m;
+})();
+function fold(s) {
+  s = String(s == null ? "" : s);
+  var out = "", i, c, cc;
+  for (i = 0; i < s.length; i++) {
+    c = s[i]; cc = s.charCodeAt(i);
+    if (cc >= 0xFF01 && cc <= 0xFF5E) c = String.fromCharCode(cc - 0xFEE0);
+    else if (cc === 0x3000) c = " ";
+    else if (T2S[c]) c = T2S[c];
+    out += c;
+  }
+  return out.toLowerCase();
+}
+var PUNCT = /[\s、，。；：！？…—–\-_/\\|()\[\]{}<>【】「」『』《》〈〉"'“”‘’*#~`^$%@+=,.;:!?※◆◎●▪▫]+/g;
+function bare(s) { return fold(s).replace(PUNCT, ""); }
+
+/* ---------- 模糊比對與標亮（沿用系列工具的做法） ---------- */
+function fuzzy(hay, q) {
+  if (!q) return 0;
+  if (!hay) return -1;
+  if (hay === q) return 1000;
+  if (hay.indexOf(q) === 0) return 900 - Math.min(hay.length, 40);
+  var p = hay.indexOf(q);
+  if (p > 0) return 800 - p * 2 - Math.min(hay.length, 40) * 0.2;
+  var i = 0, j = 0, first = -1, prev = -1, gaps = 0;
+  while (i < hay.length && j < q.length) {
+    if (hay.charAt(i) === q.charAt(j)) {
+      if (first < 0) first = i;
+      if (prev >= 0 && i - prev > 1) gaps += (i - prev - 1);
+      prev = i; j++;
+    }
+    i++;
+  }
+  if (j < q.length) return -1;
+  return 500 - gaps * 4 - first * 2 - Math.min(hay.length, 40) * 0.2;
+}
+function hilite(raw, q) {
+  raw = String(raw == null ? "" : raw);
+  if (!q || !raw) return esc(raw);
+  var i, mark = [], pos = [], b = "";
+  for (i = 0; i < raw.length; i++) mark[i] = false;
+  for (i = 0; i < raw.length; i++) {
+    var f = fold(raw[i]);
+    PUNCT.lastIndex = 0;
+    if (PUNCT.test(f)) { PUNCT.lastIndex = 0; continue; }
+    PUNCT.lastIndex = 0;
+    b += f; pos.push(i);
+  }
+  var at = b.indexOf(q), k;
+  if (at >= 0) {
+    while (at >= 0) {
+      for (k = at; k < at + q.length && k < pos.length; k++) mark[pos[k]] = true;
+      at = b.indexOf(q, at + 1);
+    }
+  } else {
+    var j = 0;
+    for (i = 0; i < b.length && j < q.length; i++) {
+      if (b.charAt(i) === q.charAt(j)) { mark[pos[i]] = true; j++; }
+    }
+    if (j < q.length) return esc(raw);
+  }
+  var out = "", on = false;
+  for (i = 0; i < raw.length; i++) {
+    if (mark[i] && !on) { out += "<mark>"; on = true; }
+    if (!mark[i] && on) { out += "</mark>"; on = false; }
+    out += esc(raw[i]);
+  }
+  return out + (on ? "</mark>" : "");
+}
+
+/* ==========================================================================
+   貼上的表格 → 格子陣列
+   從試算表 Ctrl+C 時剪貼簿裡有兩份：純文字與 HTML。
+   純文字會掉合併儲存格（只有左上角有值），所以優先解析 HTML（處理 rowspan／colspan）。
+   ========================================================================== */
+function splitTable(text, delim) {
+  var s = String(text).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  var rows = [], row = [], cell = "", i = 0, q = false, c;
+  while (i < s.length) {
+    c = s[i];
+    if (q) {
+      if (c === '"') { if (s[i + 1] === '"') { cell += '"'; i += 2; continue; } q = false; i++; continue; }
+      cell += c; i++; continue;
+    }
+    if (c === '"' && cell === "") { q = true; i++; continue; }
+    if (c === delim) { row.push(cell); cell = ""; i++; continue; }
+    if (c === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; i++; continue; }
+    cell += c; i++;
+  }
+  row.push(cell); rows.push(row);
+  return rows.filter(function (r) {
+    return r.some(function (x) { return String(x).trim() !== ""; });
+  });
+}
+function htmlCellText(s) {
+  return String(s == null ? "" : s)
+    .replace(/<br\s*\/?>/gi, "\n").replace(/<\/(p|div|tr)>/gi, "\n")
+    .replace(/<[^>]*>/g, "").replace(/&nbsp;/gi, " ")
+    .replace(/&lt;/gi, "<").replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"').replace(/&#39;/gi, "'").replace(/&amp;/gi, "&")
+    .replace(/\r\n?/g, "\n").replace(/[ \t]+\n/g, "\n").trim();
+}
+function parseHtmlGrid(html) {
+  var tm = /<table[\s\S]*?<\/table>/i.exec(String(html || ""));
+  if (!tm) return null;
+  var rowRe = /<tr\b[^>]*>([\s\S]*?)<\/tr>/gi, rm, raw = [];
+  while ((rm = rowRe.exec(tm[0]))) {
+    var cellRe = /<t[dh]\b([^>]*)>([\s\S]*?)<\/t[dh]>/gi, cm, cells = [];
+    while ((cm = cellRe.exec(rm[1]))) {
+      var att = cm[1] || "";
+      var rs = /rowspan\s*=\s*"?'?(\d+)/i.exec(att);
+      var cs = /colspan\s*=\s*"?'?(\d+)/i.exec(att);
+      cells.push({
+        t: htmlCellText(cm[2]),
+        rs: rs ? Math.max(1, parseInt(rs[1], 10)) : 1,
+        cs: cs ? Math.max(1, parseInt(cs[1], 10)) : 1
+      });
+    }
+    raw.push(cells);
+  }
+  if (!raw.length) return null;
+  var grid = [], taken = {}, r, k, c, i, j;
+  for (r = 0; r < raw.length; r++) if (!grid[r]) grid[r] = [];
+  for (r = 0; r < raw.length; r++) {
+    c = 0;
+    for (k = 0; k < raw[r].length; k++) {
+      while (taken[r + "," + c]) c++;
+      for (i = 0; i < raw[r][k].rs; i++) {
+        for (j = 0; j < raw[r][k].cs; j++) {
+          if (!grid[r + i]) grid[r + i] = [];
+          grid[r + i][c + j] = raw[r][k].t;
+          taken[(r + i) + "," + (c + j)] = 1;
+        }
+      }
+      c += raw[r][k].cs;
+    }
+  }
+  for (r = 0; r < grid.length; r++)
+    for (c = 0; c < grid[r].length; c++) if (grid[r][c] === undefined) grid[r][c] = "";
+  grid = grid.filter(function (row) {
+    return row.some(function (x) { return String(x).trim() !== ""; });
+  });
+  return grid.length ? grid : null;
+}
+
+/* ==========================================================================
+   原表格式 → 設施清單
+
+   「設施说明整理.xlsx」每個分頁都是同一種寫法，只差層數：
+     4 欄：大類 ║ 分類 ║ 設施 ║ 內容          （極速地帶、海洋館）
+     3 欄：分類 ║ 設施 ║ 內容                 （兒童王國、童話森林、水上樂園、冒險世界）
+   每個設施佔兩列：第一列是規則、第二列「遊玩範例：…」是範例。
+   有些設施沒有分類（整列橫向合併），有些沒有子分類。
+   第 5 欄偶爾有備註（極速地帶有 3 筆）。
+
+   ★ 不用「這是幾欄的分頁」去判斷，而是看「這一列實際有幾格」：
+     HTML 貼上時，橫向合併的格子會被複製到每一格（尾端連續相同 → 收成一格）；
+     純文字貼上時，合併的格子只有第一格有字（尾端空白 → 直接不算）。
+     兩條路最後都會變成同樣的格數，所以層級判斷只寫一份：
+       5 格 → 大類、分類、設施、內容、備註
+       4 格 → 大類、分類、設施、內容
+       3 格 → 分類、設施、內容
+       2 格 → 設施、內容（沒有分類）
+   直向合併在純文字裡是「前面幾格空白」，用上一列補起來。
+   ========================================================================== */
+function isExample(s) { return /^遊玩(方案|范例|範例|示例|举例|舉例)/.test(String(s || "").trim()); }
+function labelClean(s) {
+  /* 名稱格偶爾是兩行：「泳裝規定⏎（前三）」接起來；「特殊号半顺⏎杂六」用／隔開 */
+  return cellClean(s).replace(/\s*\n\s*([（(])/g, "$1").replace(/\s*\n\s*/g, "／").replace(/\s+/g, " ").trim();
+}
+function parseRuleGrid(grid) {
+  var byKey = {}, order = [], prev = [], r, i, cells, n, nonEmpty, lead;
+  var skipped = 0;
+  for (r = 0; r < (grid || []).length; r++) {
+    cells = (grid[r] || []).map(cellClean);
+    while (cells.length && !cells[cells.length - 1]) cells.pop();
+    if (!cells.length) continue;
+    /* 前段空白 → 直向合併，用上一列的同一格補 */
+    i = 0;
+    while (i < cells.length && !cells[i]) { cells[i] = prev[i] || ""; i++; }
+    /* 中間空格：這一列的資料到這裡就結束（例如純文字貼上的橫向合併） */
+    for (i = 0; i < cells.length; i++) if (!cells[i]) { cells = cells.slice(0, i); break; }
+    nonEmpty = cells.filter(Boolean);
+    if (nonEmpty.length <= 1) { skipped++; continue; }
+    if (nonEmpty.every(function (x) { return x === nonEmpty[0]; })) { skipped++; continue; }   /* 標題列 */
+    /* 尾端連續相同 → HTML 的橫向合併，收成一格 */
+    while (cells.length >= 2 && cells[cells.length - 1] === cells[cells.length - 2]) cells.pop();
+    n = cells.length;
+    var cat = "", sub = "", name = "", content = "", note = "";
+    if (n >= 5) { cat = cells[0]; sub = cells[1]; name = cells[2]; content = cells[3]; note = cells.slice(4).filter(Boolean).join("\n"); lead = 3; }
+    else if (n === 4) { cat = cells[0]; sub = cells[1]; name = cells[2]; content = cells[3]; lead = 3; }
+    else if (n === 3) { cat = cells[0]; name = cells[1]; content = cells[2]; lead = 2; }
+    else { name = cells[0]; content = cells[1]; lead = 1; }
+    prev = cells.slice(0, lead);
+    cat = labelClean(cat); sub = labelClean(sub); name = labelClean(name);
+    if (sub && sub === cat) sub = "";
+    if (!name) { skipped++; continue; }
+    var key = cat + "" + sub + "" + name;
+    var p = byKey[key];
+    if (!p) { p = byKey[key] = { cat: cat, sub: sub, name: name, rule: "", ex: "", note: "" }; order.push(p); }
+    if (isExample(content)) p.ex = joinPart(p.ex, content);
+    else p.rule = joinPart(p.rule, content.replace(/\s*遊玩範例[:：]\s*$/, ""));
+    if (note) p.note = joinPart(p.note, note);
+  }
+  return { plays: order, skipped: skipped };
+}
+function joinPart(a, b) {
+  a = String(a || ""); b = cellClean(b);
+  if (!b) return a;
+  if (!a) return b;
+  if (a === b || a.indexOf(b) >= 0) return a;
+  return a + "\n\n" + b;
+}
+
+/* ==========================================================================
+   標準格式（有標題列）→ 設施清單，可以一次貼多個園區
+     園區 ⇥ 設施類型 ⇥ 設施分類 ⇥ 子分類 ⇥ 設施名稱 ⇥ 規則說明 ⇥ 遊玩範例 ⇥ 備註
+   「匯出」產生的就是這個格式，所以匯出→改→貼回來一定對得上。
+   沒有標題列時照欄數推：5 欄＝園區、分類、設施、規則、範例；
+   6 欄多子分類；7 欄多設施類型（在園區後面）；8 欄多備註。
+   ========================================================================== */
+var STD_COLS = [
+  { k: "lot",  re: /[园園][区區]|[设設]施|lottery/i },
+  { k: "kind", re: /[类類]型|[类類][别別]|kind/i },
+  { k: "sub",  re: /子分[类類]|小[类類]|sub/i },
+  { k: "cat",  re: /分[类類]|大[类類]|category/i },
+  { k: "name", re: /設施|名[称稱]|name/i },
+  { k: "rule", re: /[规規][则則]|[说說]明|rule/i },
+  { k: "ex",   re: /[范範]例|[举舉]例|示例|例子|example/i },
+  { k: "note", re: /[备備][注註]|注意|note/i }
+];
+function stdHeaderMap(cells) {
+  var map = {}, used = {}, i, j, c;
+  for (i = 0; i < cells.length; i++) {
+    c = flat(cells[i]); if (!c) continue;
+    for (j = 0; j < STD_COLS.length; j++) {
+      if (used[STD_COLS[j].k]) continue;
+      if (STD_COLS[j].re.test(c)) { map[STD_COLS[j].k] = i; used[STD_COLS[j].k] = 1; break; }
+    }
+  }
+  return map;
+}
+var STD_POS = {
+  5: ["lot", "cat", "name", "rule", "ex"],
+  6: ["lot", "cat", "sub", "name", "rule", "ex"],
+  7: ["lot", "kind", "cat", "sub", "name", "rule", "ex"],
+  8: ["lot", "kind", "cat", "sub", "name", "rule", "ex", "note"]
+};
+function parseStdGrid(grid) {
+  var rows = (grid || []).map(function (r) { return (r || []).map(cellClean); })
+    .filter(function (r) { return r.some(Boolean); });
+  if (!rows.length) return null;
+  var map = stdHeaderMap(rows[0]), header = false, start = 0, width, i, k, cols;
+  if (map.lot !== undefined && map.name !== undefined && map.rule !== undefined) { header = true; start = 1; }
+  else {
+    width = 0;
+    rows.forEach(function (r) { var w = r.length; while (w && !r[w - 1]) w--; if (w > width) width = w; });
+    cols = STD_POS[Math.min(8, width)];
+    if (!cols || width < 5) return null;
+    map = {};
+    for (i = 0; i < cols.length; i++) map[cols[i]] = i;
+  }
+  var plays = [], bad = 0;
+  for (i = start; i < rows.length; i++) {
+    var r = rows[i], p = {};
+    for (k in map) p[k] = labelOrText(k, r[map[k]]);
+    if (!p.lot || !p.name) { bad++; continue; }
+    p.kind = normKind(p.kind);
+    plays.push({ lot: p.lot, k: p.kind, cat: p.cat || "", sub: p.sub || "", name: p.name,
+                 rule: p.rule || "", ex: p.ex || "", note: p.note || "" });
+  }
+  if (!plays.length) return null;
+  return { plays: plays, header: header, bad: bad };
+}
+function labelOrText(k, v) {
+  return (k === "rule" || k === "ex" || k === "note") ? cellClean(v) : labelClean(v);
+}
+function normKind(s) {
+  s = flat(s);
+  if (!s) return "";
+  if (/快速通關/.test(s)) return "快速通關";
+  if (/官方|一般|正常|general/i.test(s)) return "";
+  return s;
+}
+
+/* ==========================================================================
+   設施清單 → 目錄結構
+     lots: [ { n:園區, groups:[ { n:分類, k:設施類型, desc, ex, plays:[ {n, sub, rule, ex, note} ] } ] } ]
+   ・沒有分類的設施收在 n==="" 的群組，畫面上直接放在園區底下（排最前面）。
+   ・「沒有分類的設施」若跟某個分類同名，那其實是該分類的總說明（例如 水上樂園的泳裝規定
+     先有一段總說明、底下再分 第1～5名／第6～10名），就收成該分類的 desc，不佔一筆設施。
+   ========================================================================== */
+function playKey(lot, k, cat, sub, name) { return [lot, k || "", cat || "", sub || "", name].join(""); }
+function buildLots(plays, lotOrder) {
+  var lots = [], byLot = {};
+  (plays || []).forEach(function (p) {
+    if (!p || !p.lot || !p.name) return;
+    var lot = byLot[p.lot];
+    if (!lot) { lot = byLot[p.lot] = { n: p.lot, groups: [], _g: {} }; lots.push(lot); }
+    var gk = (p.k || "") + "" + (p.cat || "");
+    var g = lot._g[gk];
+    if (!g) { g = lot._g[gk] = { n: p.cat || "", k: p.k || "", plays: [] }; lot.groups.push(g); }
+    /* 同一個群組裡同名（同子分類）的設施只留一筆：後面出現的只補上缺的規則／範例，不重複 */
+    var dup = null;
+    g.plays.forEach(function (o) { if (!dup && o.n === p.name && o.sub === (p.sub || "")) dup = o; });
+    if (dup) {
+      dup.rule = joinPart(dup.rule, p.rule); dup.ex = joinPart(dup.ex, p.ex); dup.note = joinPart(dup.note, p.note);
+      return;
+    }
+    g.plays.push({ n: p.name, sub: p.sub || "", rule: p.rule || "", ex: p.ex || "", note: p.note || "" });
+  });
+  lots.forEach(function (lot) {
+    delete lot._g;
+    /* 沒有分類的群組排最前面（同一種設施類型內） */
+    lot.groups.sort(function (a, b) {
+      var ka = a.k ? 1 : 0, kb = b.k ? 1 : 0;
+      if (ka !== kb) return ka - kb;
+      if (!a.n && b.n) return -1;
+      if (a.n && !b.n) return 1;
+      return 0;
+    });
+    lot.groups.forEach(function (g) {
+      if (g.n) return;
+      g.plays = g.plays.filter(function (p) {
+        var same = null;
+        lot.groups.forEach(function (o) { if (o !== g && o.k === g.k && o.n === p.n && !same) same = o; });
+        if (!same) return true;
+        same.desc = joinPart(same.desc, p.rule);
+        same.ex = joinPart(same.ex, p.ex);
+        if (p.note) same.note = joinPart(same.note, p.note);
+        return false;
+      });
+    });
+    lot.groups = lot.groups.filter(function (g) { return g.plays.length || g.desc; });
+  });
+  if (lotOrder && lotOrder.length) {
+    var pos = {};
+    lotOrder.forEach(function (n, i) { pos[n] = i; });
+    lots.sort(function (a, b) {
+      var pa = pos[a.n] === undefined ? 999 : pos[a.n], pb = pos[b.n] === undefined ? 999 : pos[b.n];
+      return pa - pb;
+    });
+  }
+  return lots;
+}
+function normalizeData(d) {
+  var out = { at: "", lots: [] };
+  if (!d || typeof d !== "object") return out;
+  out.at = String(d.at || "");
+  (Array.isArray(d.lots) ? d.lots : []).forEach(function (l) {
+    if (!l || !l.n) return;
+    var lot = { n: String(l.n), groups: [] };
+    (Array.isArray(l.groups) ? l.groups : []).forEach(function (g) {
+      if (!g) return;
+      var grp = { n: String(g.n || ""), k: String(g.k || ""), desc: String(g.desc || ""), ex: String(g.ex || ""), note: String(g.note || ""), plays: [] };
+      (Array.isArray(g.plays) ? g.plays : []).forEach(function (p) {
+        if (!p || !p.n) return;
+        grp.plays.push({ n: String(p.n), sub: String(p.sub || ""), rule: String(p.rule || ""), ex: String(p.ex || ""), note: String(p.note || "") });
+      });
+      if (grp.plays.length || grp.desc) lot.groups.push(grp);
+    });
+    if (lot.groups.length) out.lots.push(lot);
+  });
+  return out;
+}
+function countPlays(d) {
+  var n = 0;
+  (d && d.lots || []).forEach(function (l) { l.groups.forEach(function (g) { n += g.plays.length; }); });
+  return n;
+}
+/* 把目錄結構攤平成「一筆一個設施」，畫面與匯出都用這份 */
+function flatPlays(d) {
+  var out = [];
+  (d && d.lots || []).forEach(function (l, li) {
+    l.groups.forEach(function (g, gi) {
+      g.plays.forEach(function (p, pi) {
+        out.push({ lot: l.n, k: g.k, cat: g.n, sub: p.sub, name: p.n, rule: p.rule, ex: p.ex, note: p.note,
+                   key: playKey(l.n, g.k, g.n, p.sub, p.n), li: li, gi: gi, pi: pi, group: g, play: p });
+      });
+    });
+  });
+  return out;
+}
+function groupKey(lot, g) { return "G" + lot.n + "" + (g.k || "") + "" + (g.n || ""); }
+
+/* ---------- 搜尋 ---------- */
+function hayOf(f) {
+  if (!f._h) {
+    f._nb = bare(f.name);
+    f._cb = bare([f.cat, f.sub].join(" "));
+    f._h = bare([f.lot, f.cat, f.sub, f.name, f.rule, f.ex, f.note].join(" "));
+  }
+  return f._h;
+}
+function scoreOf(f, qb) {
+  if (!qb) return 0;
+  var h = hayOf(f);
+  if (f._nb === qb) return 1000;
+  if (f._nb.indexOf(qb) >= 0) return 900 - f._nb.indexOf(qb);
+  if (f._cb.indexOf(qb) >= 0) return 700;
+  if (bare(f.lot).indexOf(qb) >= 0) return 650;
+  var fz = fuzzy(f._nb, qb);
+  if (fz > 0) return 400 + Math.min(fz, 500) / 10;
+  if (h.indexOf(qb) >= 0) return 300;
+  return -1;
+}
+
+/* ---------- 複製給遊客的說明文字（只有設施名稱、規則、範例，沒有內部欄位） ---------- */
+function memberText(f) {
+  var head = [f.lot, f.cat, f.sub].filter(Boolean).join("－");
+  var out = ["【" + (head ? head + " " : "") + f.name + "】"];
+  if (f.rule) out.push("遊玩規則：", f.rule);
+  if (f.ex) out.push("遊玩範例：", f.ex);
+  if (f.note) out.push("注意事項：", f.note);
+  return out.join("\n");
+}
+
+/* ---------- 匯出（Tab 分隔，標題列＝標準格式） ---------- */
+var EXP_HEAD = ["園區", "設施類型", "設施分類", "子分類", "設施名稱", "規則說明", "遊玩範例", "備註"];
+function tsvCell(v) {
+  var s = String(v == null ? "" : v);
+  return /[\t\n"]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function exportTsv(d) {
+  var rows = [EXP_HEAD.join("\t")], n = 0, nd = 0;
+  (d && d.lots || []).forEach(function (l) {
+    (l.groups || []).forEach(function (g) {
+      /* 分類的總說明（例如 水上樂園的「泳裝規定」）寫成「沒有分類、名稱＝分類名」那一列，
+         貼回來時 buildLots 會自動把它變回總說明——跟原表本來的寫法一致。
+         不這樣寫，匯出→改→貼回一圈下來總說明就沒了。 */
+      if (g.n && (g.desc || g.ex || g.note)) {
+        rows.push([l.n, g.k ? "快速通關" : "", "", "", g.n, g.desc, g.ex, g.note].map(tsvCell).join("\t"));
+        nd++;
+      }
+      g.plays.forEach(function (p) {
+        rows.push([l.n, g.k ? "快速通關" : "", g.n, p.sub, p.n, p.rule, p.ex, p.note].map(tsvCell).join("\t"));
+        n++;
+      });
+    });
+  });
+  return { text: rows.join("\n"), n: n, desc: nd };
+}
+
+
+/* ==========================================================================
+   狀態與儲存
+   ・DATA：目錄結構（園區 → 分類 → 設施），normalizeData 過的
+   ・SEL ：目前選到哪一筆 {t:"play"|"group", li, gi, pi}；**不進 localStorage**，
+           所以每次打開右邊都是待命畫面（2026-09-10 團隊要求：一打開不列結果）
+   ・OPEN：目錄哪幾層是展開的，用名稱當 key（換資料後還對得上）
+   ★ 畫面上的 data-* 一律放「索引」而不是 key ——
+     t2.js 的 key 用  當分隔字元，塞進 HTML 屬性不保險。
+   ========================================================================== */
+var K_DATA = "rulesq.data.v1", K_UI = "rulesq.ui.v1";
+var DATA = null, Q = "", QB = "", SEL = null, OPEN = {};
+var FLAT = null;
+
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+
+function lotKey(lot) { return "L" + lot.n; }
+function reindex() { FLAT = flatPlays(DATA); }
+function allPlays() { if (!FLAT) reindex(); return FLAT; }
+
+/* 索引 → 那一筆設施（形狀跟 flatPlays 出來的一樣） */
+function fAt(li, gi, pi) {
+  var l = DATA.lots[li]; if (!l) return null;
+  var g = l.groups[gi]; if (!g) return null;
+  var p = g.plays[pi]; if (!p) return null;
+  return { lot: l.n, k: g.k, cat: g.n, sub: p.sub, name: p.n,
+           rule: p.rule, ex: p.ex, note: p.note,
+           li: li, gi: gi, pi: pi, group: g, play: p };
+}
+function gAt(li, gi) {
+  var l = DATA.lots[li]; if (!l) return null;
+  var g = l.groups[gi]; if (!g) return null;
+  return { lot: l, g: g };
+}
+function selFAt() { return SEL && SEL.t === "play" ? fAt(SEL.li, SEL.gi, SEL.pi) : null; }
+function selGAt() { return SEL && SEL.t === "group" ? gAt(SEL.li, SEL.gi) : null; }
+function isSelPlay(li, gi, pi) {
+  return !!SEL && SEL.t === "play" && SEL.li === li && SEL.gi === gi && SEL.pi === pi;
+}
+function isSelGroup(li, gi) {
+  return !!SEL && SEL.t === "group" && SEL.li === li && SEL.gi === gi;
+}
+
+function loadAll() {
+  var raw = lsGet(K_DATA), d = null;
+  if (raw) { try { d = JSON.parse(raw); } catch (e) { d = null; } }
+  var src = "builtin";
+  if (d && d.lots && d.lots.length) src = d.src || "paste";
+  else d = BUILTIN || {};
+  DATA = normalizeData(d);
+  DATA.src = src;
+  try {
+    var u = JSON.parse(lsGet(K_UI) || "{}");
+    OPEN = (u && u.open && typeof u.open === "object") ? u.open : {};
+  } catch (e) { OPEN = {}; }
+  SEL = null;
+  reindex();
+}
+function saveUI() { lsSet(K_UI, JSON.stringify({ open: OPEN })); }
+function saveData() {
+  if (!lsSet(K_DATA, JSON.stringify({ at: DATA.at, src: DATA.src, lots: DATA.lots })))
+    toast("瀏覽器儲存空間不足，這份資料只在這個分頁有效");
+}
+
+/* ==========================================================================
+   搜尋
+   ========================================================================== */
+function results() {
+  if (!QB) return [];
+  var out = [];
+  allPlays().forEach(function (f) {
+    var s = scoreOf(f, QB);
+    if (s >= 0) out.push({ f: f, s: s });
+  });
+  out.sort(function (a, b) {
+    return b.s - a.s || a.f.li - b.f.li || a.f.gi - b.f.gi || a.f.pi - b.f.pi;
+  });
+  return out;
+}
+
+/* ==========================================================================
+   左側目錄
+   ========================================================================== */
+function tocTreeHtml() {
+  var h = "";
+  DATA.lots.forEach(function (lot, li) {
+    var lk = lotKey(lot), on = !!OPEN[lk], n = 0;
+    lot.groups.forEach(function (g) { n += g.plays.length; });
+    h += '<div class="lot">';
+    h += '<button class="lotHd" data-lot="' + li + '"><span class="tw">' + (on ? "▾" : "▸") +
+         '</span><span class="nm">' + esc(lot.n) + '</span><span class="ct">' + n + "</span></button>";
+    if (on) {
+      lot.groups.forEach(function (g, gi) {
+        if (!g.n) { h += playsHtml(li, gi, g, true); return; }
+        var gon = !!OPEN[groupKey(lot, g)];
+        h += '<button class="grpHd' + (isSelGroup(li, gi) ? " on" : "") + '" data-grp="' + li + "." + gi +
+             '"><span class="tw">' + (gon ? "▾" : "▸") + '</span><span class="nm">' + esc(g.n) + "</span>" +
+             (g.k ? '<span class="kk">' + esc(g.k) + "</span>" : "") +
+             '<span class="ct">' + g.plays.length + "</span></button>";
+        if (gon) h += playsHtml(li, gi, g, false);
+      });
+    }
+    h += "</div>";
+  });
+  return h;
+}
+function playsHtml(li, gi, g, noSub) {
+  var h = "", lastSub = null;
+  g.plays.forEach(function (p, pi) {
+    if (!noSub && p.sub && p.sub !== lastSub) h += '<div class="subHd">' + esc(p.sub) + "</div>";
+    if (!noSub) lastSub = p.sub;
+    h += '<button class="play' + (isSelPlay(li, gi, pi) ? " on" : "") +
+         '" data-play="' + li + "." + gi + "." + pi + '"><span class="nm">' + esc(p.n) + "</span>" +
+         (noSub && g.k ? '<span class="kk">' + esc(g.k) + "</span>" : "") + "</button>";
+  });
+  return h;
+}
+function tocSearchHtml(list) {
+  if (!list.length) {
+    return '<div class="tocMsg">找不到「<b>' + esc(Q) + "</b>」。<br>" +
+           "換個詞試試，打繁體也找得到簡體資料。<br>規則內文裡的字也搜得到，例如「身高限制」。</div>";
+  }
+  var h = "", lastLot = null;
+  list.forEach(function (x) {
+    var f = x.f;
+    if (f.lot !== lastLot) { h += '<div class="resHd">' + esc(f.lot) + "</div>"; lastLot = f.lot; }
+    var sub = [f.cat, f.sub].filter(Boolean).join(" › ");
+    h += '<button class="res' + (isSelPlay(f.li, f.gi, f.pi) ? " on" : "") +
+         '" data-play="' + f.li + "." + f.gi + "." + f.pi + '"><span class="nm">' + hilite(f.name, QB) + "</span>" +
+         (f.k ? '<span class="kk">' + esc(f.k) + "</span>" : "") +
+         (sub ? '<span class="pt">' + hilite(sub, QB) + "</span>" : "") + "</button>";
+  });
+  return h;
+}
+function renderToc() {
+  $("#tree").innerHTML = QB ? tocSearchHtml(results()) : tocTreeHtml();
+  renderFoot();
+}
+function renderFoot() {
+  /* 團隊 2026-09-11：底下那幾行說明文字拿掉，只留兩顆按鈕 */
+  $("#foot").innerHTML =
+    '<div class="fb"><button id="btnReset">↩ 回復成內建資料</button>' +
+    '<button id="btnWipe">🧹 清除這台裝置存的資料</button></div>';
+}
+
+/* ==========================================================================
+   右側內文
+   ========================================================================== */
+function secHtml(title, text, cls, none) {
+  if (!text && !none) return "";
+  return '<section class="sec"><h2>' + esc(title) + "</h2>" +
+         '<div class="tx ' + (text ? cls : "none") + '">' +
+         (text ? hilite(text, QB) : esc(none)) + "</div></section>";
+}
+function detailPlayHtml(f) {
+  var g = f.group;
+  var crumb = [f.lot, f.cat, f.sub].filter(Boolean)
+    .map(function (x) { return esc(x); }).join("<i>›</i>");
+  var h = '<article class="doc">';
+  h += '<div class="crumb">' + crumb + "</div>";
+  if (f.k) h += '<div class="dTop"><span class="dk">' + esc(f.k) + "設施</span></div>";
+  h += '<h1 class="dt">' + hilite(f.name, QB) + '</h1><div class="rule"></div>';
+  if (g && g.desc) h += secHtml("分類總說明", g.desc, "desc", "");
+  h += secHtml("遊玩規則", f.rule, "", "原表在這一筆沒有寫規則說明。");
+  h += secHtml("遊玩範例", f.ex || (!f.rule && g ? g.ex : ""), "ex", "原表在這一筆沒有附遊玩範例。");
+  h += secHtml("注意事項", f.note || (g ? g.note : ""), "note", "");
+  h += '<div class="acts"><button class="btn pri" id="btnCopy">📋 複製說明文字</button>' +
+       '<button class="btn" id="btnCopyRule">只複製遊玩規則</button></div>';
+  return h + "</article>";
+}
+function detailGroupHtml(li, gi, lot, g) {
+  var h = '<article class="doc">';
+  h += '<div class="crumb">' + esc(lot.n) + "</div>";
+  if (g.k) h += '<div class="dTop"><span class="dk">' + esc(g.k) + "設施</span></div>";
+  h += '<h1 class="dt">' + hilite(g.n, QB) + '</h1><div class="rule"></div>';
+  h += secHtml("總說明", g.desc, "desc", "這個分類沒有共用的總說明，直接看底下的設施。");
+  h += secHtml("遊玩範例", g.ex, "ex", "");
+  h += secHtml("注意事項", g.note, "note", "");
+  if (g.plays.length) {
+    h += '<section class="sec"><h2>底下的設施</h2><div class="ent">';
+    g.plays.forEach(function (p, pi) {
+      h += '<button data-play="' + li + "." + gi + "." + pi + '"><span class="en">' + esc(p.n) + "</span>" +
+           (p.sub ? '<span class="ec">' + esc(p.sub) + "</span>" : "") + "</button>";
+    });
+    h += "</div></section>";
+  }
+  h += '<div class="acts"><button class="btn pri" id="btnCopy">📋 複製說明文字</button></div>';
+  return h + "</article>";
+}
+function idleHtml() {
+  var h = '<div class="idle">';
+  if (QB) {
+    h += "<h1>找到 " + results().length + " 筆</h1>" +
+         '<div class="lead">左邊是「<b>' + esc(Q) + "</b>」的搜尋結果，點一筆看遊玩規則與遊玩範例。</div>";
+  } else {
+    h += "<h1>選一個園區，或直接搜設施名稱</h1>" +
+         '<div class="lead">左邊是目錄：<b>園區 → 分類 → 設施</b>，一層一層點開。' +
+         "急的話直接在上面的搜尋框打設施名稱，<b>打繁體也找得到簡體資料</b>。</div>";
+  }
+  h += '<div class="rule"></div><div class="ent">';
+  DATA.lots.forEach(function (lot, li) {
+    var c = 0, gs = 0;
+    lot.groups.forEach(function (g) { c += g.plays.length; if (g.n) gs++; });
+    h += '<button data-lotgo="' + li + '"><span class="en">' + esc(lot.n) + "</span>" +
+         '<span class="ec">' + c + " 種設施" + (gs ? "・" + gs + " 個分類" : "") + "</span></button>";
+  });
+  h += "</div>";
+  h += '<div class="tip"><b>怎麼用</b>：點到設施後，右邊會列出<b>遊玩規則</b>與<b>遊玩範例</b>，' +
+       '按「📋 複製說明文字」就能整段貼給遊客（只有設施名稱、規則、範例，沒有內部欄位）。<br>' +
+       "<b>有新的設施</b>：按右上角「➕ 新增」手動輸入。目前收錄 <code>" +
+       countPlays(DATA) + "</code> 筆設施、<code>" + DATA.lots.length + "</code> 個園區。</div>";
+  return h + "</div>";
+}
+function renderDetail() {
+  var h = '<button class="back" id="back">‹ 目錄</button>', f = selFAt(), o = selGAt();
+  if (f) h += detailPlayHtml(f);
+  else if (o) h += detailGroupHtml(SEL.li, SEL.gi, o.lot, o.g);
+  else h += idleHtml();
+  $("#detail").innerHTML = h;
+  var d = $("#detail");
+  if (d && typeof d.scrollTop === "number") d.scrollTop = 0;
+}
+function showDetail(on) {
+  try {
+    if (on) document.body.classList.add("dv");
+    else document.body.classList.remove("dv");
+  } catch (e) {}
+}
+
+/* ---------- 選取 ---------- */
+function parseIdx(s) {
+  return String(s || "").split(".").map(function (x) { return parseInt(x, 10); });
+}
+function selectPlay(li, gi, pi) {
+  var f = fAt(li, gi, pi);
+  if (!f) return;
+  SEL = { t: "play", li: li, gi: gi, pi: pi };
+  OPEN[lotKey(DATA.lots[li])] = true;
+  if (f.cat) OPEN[groupKey(DATA.lots[li], f.group)] = true;
+  saveUI();
+  renderToc(); renderDetail(); showDetail(true);
+}
+function selectGroup(li, gi) {
+  var o = gAt(li, gi);
+  if (!o) return;
+  SEL = { t: "group", li: li, gi: gi };
+  var gk = groupKey(o.lot, o.g);
+  OPEN[gk] = !OPEN[gk];
+  OPEN[lotKey(o.lot)] = true;
+  saveUI();
+  renderToc(); renderDetail(); showDetail(true);
+}
+function toggleLot(li) {
+  var lot = DATA.lots[li];
+  if (!lot) return;
+  var lk = lotKey(lot);
+  OPEN[lk] = !OPEN[lk];
+  saveUI(); renderToc();
+}
+
+/* ==========================================================================
+   複製給遊客
+   ========================================================================== */
+function copyText(txt, okMsg) {
+  function fallback() {
+    var ta = document.createElement("textarea");
+    ta.value = txt;
+    ta.style.cssText = "position:fixed;left:-9999px;top:0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    toast(ok ? okMsg : "這個瀏覽器不給自動複製，請手動選取");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(function () { toast(okMsg); }, fallback);
+  } else fallback();
+}
+/* 這一筆自己沒寫規則時，用所屬分類的總說明補上，免得複製出去只剩一個標題 */
+function copyTarget() {
+  var f = selFAt(), o = selGAt();
+  if (f) {
+    var g = f.group;
+    return { lot: f.lot, cat: f.cat, sub: f.sub, name: f.name,
+             rule: f.rule || (g ? g.desc : ""),
+             ex: f.ex || (!f.rule && g ? g.ex : ""),
+             note: f.note || (g ? g.note : "") };
+  }
+  if (o) {
+    return { lot: o.lot.n, cat: "", sub: "", name: o.g.n,
+             rule: o.g.desc || "", ex: o.g.ex || "", note: o.g.note || "" };
+  }
+  return null;
+}
+
+/* ==========================================================================
+   彈窗
+   ========================================================================== */
+function closeModal() { $("#modal").innerHTML = ""; }
+function openModal(title, body, foot) {
+  $("#modal").innerHTML =
+    '<div class="mask" id="mask"><div class="modal">' +
+    '<div class="mHd"><h2>' + title + '</h2><button class="x" id="mx">×</button></div>' +
+    '<div class="mBd">' + body + "</div>" +
+    (foot ? '<div class="mFt">' + foot + "</div>" : "") +
+    "</div></div>";
+  $("#mx").onclick = closeModal;
+  $("#mask").onclick = function (e) { if (e.target.id === "mask") closeModal(); };
+}
+
+/* ---------- 匯出 ---------- */
+function openExport() {
+  var opts = '<option value="*">全部園區</option>';
+  DATA.lots.forEach(function (l) { opts += '<option value="' + esc(l.n) + '">' + esc(l.n) + "</option>"; });
+  var body =
+    '<div class="hint"><p>產生 Tab 分隔的文字，複製後在試算表點第一格 <code>Ctrl+V</code> 就會落到各欄。' +
+    "第一列是標題（園區／設施類型／設施分類／子分類／設施名稱／規則說明／遊玩範例／備註），" +
+    "拿去<b>備份</b>或<b>給團隊更新原表</b>都可以。</p></div>" +
+    '<div class="rowLabel">要匯出哪些</div><select class="sel" id="xLot">' + opts + "</select>" +
+    '<textarea class="big2" id="xOut" readonly style="margin-top:10px;min-height:210px"></textarea>' +
+    '<div class="prev" id="xInfo"></div>';
+  openModal("⬇ 匯出 Tab 文字", body,
+    '<button class="btn" id="xClose">關閉</button><button class="btn pri" id="xCopy">複製全部</button>');
+  $("#xClose").onclick = closeModal;
+  function refresh() {
+    var v = $("#xLot").value, d = DATA;
+    if (v && v !== "*") d = { at: DATA.at, lots: DATA.lots.filter(function (l) { return l.n === v; }) };
+    var r = exportTsv(d);
+    $("#xOut").value = r.text;
+    $("#xInfo").textContent = "共 " + r.n + " 筆設施" +
+      (v === "*" ? "、" + DATA.lots.length + " 個園區" : "") + "。" +
+      (r.desc ? "另有 " + r.desc + " 列是分類的總說明（分類欄留空、名稱欄寫分類名）。" : "");
+  }
+  $("#xLot").onchange = refresh;
+  refresh();
+  $("#xCopy").onclick = function () { copyText($("#xOut").value, "已複製，可以貼進試算表了"); };
+}
+
+/* ---------- 新增設施（手動輸入）----------
+   團隊 2026-09-11：「貼上／更新資料」整個移除，之後有新設施用這個表單手動輸入。
+   （t2.js 裡的表格解析函式沒動——建置端 tbuild.js 還借用 parseRuleGrid 讀原始 Excel。） */
+function stamp() {
+  var p = function (n) { return (n < 10 ? "0" : "") + n; }, d = new Date();
+  return d.getFullYear() + "/" + p(d.getMonth() + 1) + "/" + p(d.getDate()) + " " +
+         p(d.getHours()) + ":" + p(d.getMinutes());
+}
+/* 找（或建）園區 → 找（或建）同類型＋同分類的群組 → 放進去。
+   同群組已有同名＋同子分類的 → 問過才蓋掉。回傳新設施的位置讓畫面跳過去。 */
+function addPlay(p) {
+  var lot = null;
+  DATA.lots.forEach(function (l) { if (l.n === p.lot) lot = l; });
+  if (!lot) { lot = { n: p.lot, groups: [] }; DATA.lots.push(lot); }
+  var g = null;
+  lot.groups.forEach(function (x) { if (!g && x.n === (p.cat || "") && x.k === (p.k || "")) g = x; });
+  if (!g) {
+    g = { n: p.cat || "", k: p.k || "", desc: "", ex: "", note: "", plays: [] };
+    /* 一般設施的群組插在快速通關前面，跟內建資料的排法一致 */
+    var at = lot.groups.length, i;
+    if (!g.k) { for (i = 0; i < lot.groups.length; i++) { if (lot.groups[i].k) { at = i; break; } } }
+    lot.groups.splice(at, 0, g);
+  }
+  var dup = null;
+  g.plays.forEach(function (o) { if (!dup && o.n === p.name && o.sub === (p.sub || "")) dup = o; });
+  if (dup) {
+    if (!confirm("已經有「" + p.name + "」這筆設施了，要蓋掉原本的內容嗎？")) return null;
+    dup.rule = p.rule || ""; dup.ex = p.ex || ""; dup.note = p.note || "";
+  } else {
+    g.plays.push({ n: p.name, sub: p.sub || "", rule: p.rule || "", ex: p.ex || "", note: p.note || "" });
+  }
+  DATA.at = stamp() + " 新增";
+  DATA.src = "edited";
+  reindex();
+  saveData();
+  var li = DATA.lots.indexOf(lot), gi = lot.groups.indexOf(g), pi = -1;
+  g.plays.forEach(function (o, i2) { if (pi < 0 && o.n === p.name && o.sub === (p.sub || "")) pi = i2; });
+  return { li: li, gi: gi, pi: pi };
+}
+function openAdd() {
+  var opts = "";
+  DATA.lots.forEach(function (l) { opts += '<option value="' + esc(l.n) + '">' + esc(l.n) + "</option>"; });
+  opts += '<option value="__new">＋ 新增一個園區…</option>';
+  var body =
+    '<div class="hint">填好按「儲存」就會加進左邊的目錄，資料只存在這台裝置的瀏覽器。' +
+    "名稱跟現有設施一樣時會先問你要不要蓋掉（＝可以拿來改內容）。</div>" +
+    '<div class="rowLabel">園區（必填）</div>' +
+    '<select class="sel" id="aLot">' + opts + "</select>" +
+    '<input id="aLotNew" class="sel" style="display:none;margin-top:8px" placeholder="新園區的名稱">' +
+    '<div class="rowLabel">設施類型</div>' +
+    '<select class="sel" id="aKind"><option value="">一般設施</option><option value="快速通關">快速通關</option></select>' +
+    '<div class="rowLabel">設施分類（可留空，例如：雲霄飛車、旋轉類）</div>' +
+    '<input id="aCat" class="sel" style="width:100%">' +
+    '<div class="rowLabel">子分類（可留空，例如：室內雲霄飛車）</div>' +
+    '<input id="aSub" class="sel" style="width:100%">' +
+    '<div class="rowLabel">設施名稱（必填）</div>' +
+    '<input id="aName" class="sel" style="width:100%">' +
+    '<div class="rowLabel">遊玩規則（必填）</div>' +
+    '<textarea class="big2" id="aRule" style="min-height:110px"></textarea>' +
+    '<div class="rowLabel">遊玩範例（可留空）</div>' +
+    '<textarea class="big2" id="aEx" style="min-height:70px" placeholder="遊玩範例：…"></textarea>' +
+    '<div class="rowLabel">注意事項（可留空）</div>' +
+    '<textarea class="big2" id="aNote" style="min-height:54px"></textarea>';
+  openModal("➕ 新增設施", body,
+    '<button class="btn" id="aCancel">取消</button><button class="btn pri" id="aOk">儲存</button>');
+  $("#aLot").onchange = function () { $("#aLotNew").style.display = this.value === "__new" ? "" : "none"; };
+  $("#aCancel").onclick = closeModal;
+  $("#aOk").onclick = function () {
+    var lotName = $("#aLot").value === "__new" ? labelClean($("#aLotNew").value) : $("#aLot").value;
+    var name = labelClean($("#aName").value);
+    var rule = cellClean($("#aRule").value);
+    if (!lotName) { toast("請選（或輸入）園區"); return; }
+    if (!name) { toast("請輸入設施名稱"); return; }
+    if (!rule) { toast("請輸入遊玩規則"); return; }
+    var res = addPlay({ lot: lotName, k: $("#aKind").value, cat: labelClean($("#aCat").value),
+                        sub: labelClean($("#aSub").value), name: name, rule: rule,
+                        ex: cellClean($("#aEx").value), note: cellClean($("#aNote").value) });
+    if (!res) return;
+    closeModal();
+    Q = ""; QB = "";
+    var qi = $("#q"); if (qi) qi.value = "";
+    $("#qClr").style.display = "none";
+    selectPlay(res.li, res.gi, res.pi);
+    toast("已新增「" + name + "」");
+  };
+}
+
+/* ---------- 使用說明 ---------- */
+function openHelp() {
+  var body =
+    '<div class="hint">' +
+    "<p><b>怎麼查</b><br>左邊目錄是<b>園區 → 分類 → 設施</b>三層，一層一層點開；" +
+    "急的話直接在上面搜尋框打設施名稱。<b>打繁體找得到簡體資料</b>（打「室內」找得到「室內」），" +
+    "規則內文裡的字也搜得到。鍵盤按 <code>/</code> 可以直接跳到搜尋框。</p>" +
+    "<p><b>點分類標題會怎樣</b><br>有些分類本身有一段總說明（例如 水上樂園的「泳裝規定」先講一次規則，" +
+    "底下再分第1～5名／第6～10名）。點分類標題就會在右邊顯示那段總說明。</p>" +
+    "<p><b>複製說明文字</b><br>輸出格式是這樣，可以直接貼給遊客：</p>" +
+    '<table class="doc2"><tr><td><b>【園區－分類 設施名稱】</b><br>遊玩規則：…<br>遊玩範例：…<br>注意事項：…</td></tr></table>' +
+    "<p>只有設施名稱、規則、範例、注意事項，<b>沒有任何內部欄位</b>。" +
+    "如果那一筆自己沒寫規則，會自動補上所屬分類的總說明，不會複製出一個空標題。</p>" +
+    "<p><b>「快速通關」標籤</b><br>原表的快速通關本來是另一個分頁，這裡併在同一個園區底下，" +
+    "用金色的「快速通關」標籤區分，別跟一般設施搞混。</p>" +
+    "<p><b>新增設施</b><br>按右上角「➕ 新增」：選園區（或建新園區）、填設施名稱與遊玩規則，" +
+    "分類／子分類／範例／注意可以留空，儲存後馬上出現在目錄裡。" +
+    "<b>名稱跟現有設施一樣時會先問你要不要蓋掉</b>，所以要改某一筆的內容，" +
+    "就用一樣的園區＋分類＋名稱再存一次即可。</p>" +
+    "<p><b>要回到原本的資料</b><br>左邊目錄最下面按「↩ 回復成內建資料」，自己新增的會清掉、回到內建那份。</p>" +
+    "<p><b>隱私</b><br>整個工具就是一個 HTML 檔，沒有連任何網路服務、沒有外部套件。" +
+    "資料只寫在這台裝置瀏覽器的 localStorage，關掉網頁不會消失，也不會上傳到任何地方。</p>" +
+    "</div>";
+  openModal("❓ 使用說明", body, '<button class="btn pri" id="hOk">知道了</button>');
+  $("#hOk").onclick = closeModal;
+}
+
+/* ==========================================================================
+   事件
+   ========================================================================== */
+function bind() {
+  var q = $("#q"), tmr = null;
+  q.addEventListener("input", function () {
+    clearTimeout(tmr);
+    tmr = setTimeout(function () {
+      Q = q.value; QB = bare(Q);
+      $("#qClr").style.display = Q ? "" : "none";
+      renderToc(); renderDetail(); showDetail(false);
+    }, 130);
+  });
+  $("#qClr").onclick = function () {
+    q.value = ""; Q = ""; QB = ""; this.style.display = "none";
+    renderToc(); renderDetail(); showDetail(false); q.focus();
+  };
+
+  $("#toc").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-play]");
+    if (b) { var a = parseIdx(b.getAttribute("data-play")); selectPlay(a[0], a[1], a[2]); return; }
+    b = e.target.closest("[data-grp]");
+    if (b) { var c = parseIdx(b.getAttribute("data-grp")); selectGroup(c[0], c[1]); return; }
+    b = e.target.closest("[data-lot]");
+    if (b) { toggleLot(parseIdx(b.getAttribute("data-lot"))[0]); return; }
+    if (e.target.id === "btnReset") {
+      if (!confirm("要把資料回復成內建的那一份嗎？\n（你貼上的那份會被清掉）")) return;
+      lsDel(K_DATA); loadAll();
+      renderToc(); renderDetail(); showDetail(false); toast("已回復成內建資料");
+      return;
+    }
+    if (e.target.id === "btnWipe") {
+      if (!confirm("要清掉這台裝置存的所有資料與設定嗎？\n（下次打開會回到內建資料）")) return;
+      lsDel(K_DATA); lsDel(K_UI);
+      OPEN = {}; Q = ""; QB = "";
+      $("#q").value = ""; $("#qClr").style.display = "none";
+      loadAll();
+      renderToc(); renderDetail(); showDetail(false); toast("已清除");
+    }
+  });
+
+  $("#detail").addEventListener("click", function (e) {
+    if (e.target.closest("#back")) { showDetail(false); return; }
+    var b = e.target.closest("[data-play]");
+    if (b) { var a = parseIdx(b.getAttribute("data-play")); selectPlay(a[0], a[1], a[2]); return; }
+    b = e.target.closest("[data-lotgo]");
+    if (b) {
+      var li = parseIdx(b.getAttribute("data-lotgo"))[0];
+      if (DATA.lots[li]) { OPEN[lotKey(DATA.lots[li])] = true; saveUI(); renderToc(); showDetail(false); }
+      return;
+    }
+    if (e.target.closest("#btnCopy")) {
+      var t = copyTarget();
+      if (t) copyText(memberText(t), "已複製，可以貼給遊客了");
+      return;
+    }
+    if (e.target.closest("#btnCopyRule")) {
+      var t2 = copyTarget();
+      if (t2 && t2.rule) copyText(t2.rule, "已複製遊玩規則");
+      else toast("這一筆沒有規則說明可以複製");
+    }
+  });
+
+  $("#btnAdd").onclick = openAdd;
+  $("#btnExport").onclick = openExport;
+  $("#btnHelp").onclick = openHelp;
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { if ($("#mask")) closeModal(); else showDetail(false); }
+    if (e.key === "/" && document.activeElement !== q && !$("#mask")) { e.preventDefault(); q.focus(); }
+  });
+}
+
+/* ---------- 啟動 ---------- */
+loadAll();
+renderToc();
+renderDetail();
+bind();
+
+</script>
+</body>
+</html>
